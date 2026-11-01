@@ -186,10 +186,10 @@ test('an older season selected shows its last stage, not placeholders', async ()
 });
 
 // ---------------------------------------------------------------- navigation and defaults
-test('People tabs are ordered Attendance, Scores, Favourites, Consistency, Twins, and Attendance opens first', async () => {
+test('People tabs are ordered Attendance, Scores, Consistency, Favourites, Twins, and Attendance opens first', async () => {
   const { html } = await page('#people');
   const tabs = [...html.matchAll(/data-ptab="(\w+)"/g)].map(m => m[1]);
-  assert.deepEqual(tabs, ['attendance', 'scores', 'favourites', 'consistency', 'twins']);
+  assert.deepEqual(tabs, ['attendance', 'scores', 'consistency', 'favourites', 'twins']);
   assert.match(html, /data-ptab="attendance" aria-selected="true"/);
 });
 
@@ -284,7 +284,7 @@ test('Twins: says so when nobody has enough breweries in common', async () => {
 
 test('Twins is the fifth People tab, and #people-twins opens it', async () => {
   const { html } = await renderPage({ bundle: twinsBundle(), hash: '#people-twins', search: '?year=2026' });
-  assert.deepEqual([...html.matchAll(/data-ptab="(\w+)"/g)].map(m => m[1]), ['attendance', 'scores', 'favourites', 'consistency', 'twins']);
+  assert.deepEqual([...html.matchAll(/data-ptab="(\w+)"/g)].map(m => m[1]), ['attendance', 'scores', 'consistency', 'favourites', 'twins']);
   assert.match(html, /data-ptab="twins" aria-selected="true"/);
 });
 

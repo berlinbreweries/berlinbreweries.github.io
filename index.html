@@ -784,7 +784,7 @@ function renderFavourites(people){
 }
 function renderPeople(){
   const people=computePeople(computeBrews());
-  const tabs=[['attendance','Attendance'],['scores','Scores'],['favourites','Favourites'],['consistency','Consistency'],['twins','Twins']];
+  const tabs=[['attendance','Attendance'],['scores','Scores'],['consistency','Consistency'],['favourites','Favourites'],['twins','Twins']];
   const seg='<div class="seg five" role="tablist" aria-label="People views">'+tabs.map(t=>
     '<button type="button" role="tab" data-ptab="'+t[0]+'" aria-selected="'+(state.ptab===t[0])+'">'+t[1]+'</button>').join('')+'</div>';
   let inner;
@@ -1012,7 +1012,7 @@ function render(){
   document.getElementById('app').innerHTML=banners()+({winners:renderWinners,breweries:renderProfiles,tour:renderTour,people:renderPeople})[state.view]();
   ['winners','breweries','tour','people'].forEach(v=>{const n=document.getElementById('nav-'+v);if(v===state.view)n.setAttribute('aria-current','page');else n.removeAttribute('aria-current')});
 }
-const PTABS=['attendance','scores','favourites','consistency','twins'];
+const PTABS=['attendance','scores','consistency','favourites','twins'];
 const peopleHash=()=>'people-'+state.ptab+(state.ptab==='twins'&&state.twin!=='all'?'-'+state.twin:'');
 const TTABS=['ratings','agenda'];
 function readHash(){
