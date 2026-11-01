@@ -270,6 +270,20 @@ td.detail{padding:4px 0 14px;background:transparent}
 .bar button[aria-current="page"]{color:var(--gold)}
 .bar svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 
+/* scroll hint: a small arrow above the menu while there is more page below the fold */
+.more{
+  position:fixed;left:50%;bottom:calc(var(--navh) + env(safe-area-inset-bottom,0px) + 10px);z-index:20;
+  width:40px;height:40px;margin-left:-20px;border-radius:50%;border:1px solid var(--line);
+  background:rgba(44,43,42,.88);color:var(--gold);display:flex;align-items:center;justify-content:center;
+  padding:0;cursor:pointer;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s;
+}
+.more.on{opacity:1;visibility:visible}
+.more svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+@media (prefers-reduced-motion:no-preference){
+  .more.on svg{animation:nudge 1.8s ease-in-out infinite}
+}
+@keyframes nudge{0%,60%,100%{transform:translateY(-2px)}30%{transform:translateY(3px)}}
+
 @media (prefers-reduced-motion:no-preference){
   .chip,.seg button,.bar button{transition:background-color .15s,color .15s}
 }
@@ -305,6 +319,7 @@ td.detail{padding:4px 0 14px;background:transparent}
     </button>
   </div>
 </nav>
+<button type="button" class="more" id="more" aria-label="Scroll down for more" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
 
 <script type="application/json" id="tdbb-data"></script>
 <script>
@@ -1003,6 +1018,15 @@ function banners(){
   if(WARN.length)s+='<div class="banner warn"><b>Some data could not be used:</b><ul>'+WARN.slice(0,6).map(w=>'<li>'+esc(w)+'</li>').join('')+'</ul></div>';
   return s;
 }
+/* scroll hint: Winners page only; show the arrow only while the page is at the top and runs on below the fold */
+function updateMore(){
+  const root=document.documentElement,b=document.getElementById('more');
+  if(!root||!b||typeof window.innerHeight!=='number')return;
+  const below=root.scrollHeight-window.innerHeight-(window.scrollY||0);
+  b.classList.toggle('on',state.view==='winners'&&(window.scrollY||0)<40&&below>80);
+}
+window.addEventListener('scroll',updateMore,{passive:true});
+window.addEventListener('resize',updateMore);
 const BASE_TITLE='Tour de Berlin Breweries – Brewery Rankings & Results';
 const VIEW_TITLES={winners:BASE_TITLE,breweries:'Berlin Breweries We Rated · Tour de Berlin Breweries',tour:'Tour Ratings & Agenda · Tour de Berlin Breweries',people:'The People of the Tour · Tour de Berlin Breweries'};
 function render(){
@@ -1011,6 +1035,7 @@ function render(){
   document.title=VIEW_TITLES[state.view]||BASE_TITLE;
   document.getElementById('app').innerHTML=banners()+({winners:renderWinners,breweries:renderProfiles,tour:renderTour,people:renderPeople})[state.view]();
   ['winners','breweries','tour','people'].forEach(v=>{const n=document.getElementById('nav-'+v);if(v===state.view)n.setAttribute('aria-current','page');else n.removeAttribute('aria-current')});
+  updateMore();
 }
 const PTABS=['attendance','scores','consistency','favourites','twins'];
 const peopleHash=()=>'people-'+state.ptab+(state.ptab==='twins'&&state.twin!=='all'?'-'+state.twin:'');
@@ -1047,6 +1072,7 @@ window.addEventListener('hashchange',()=>{readHash();render();afterNav()});
 document.addEventListener('click',e=>{
   const t=e.target;
   let el;
+  if(t.closest&&t.closest('#more')){window.scrollBy({top:Math.round(window.innerHeight*.7),behavior:'smooth'});return}
   if((el=t.closest('a[target="_blank"]'))){
     const w=window.open(el.getAttribute('href'),'_blank','width=1100,height=800');
     if(w){e.preventDefault();try{w.opener=null}catch(_){}}
