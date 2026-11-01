@@ -55,7 +55,7 @@ export async function renderPage({ bundle, hash = '', search = '', today = '2026
   for (let i = 0; i < 500 && !ready(); i++) await new Promise(r => setImmediate(r));
   if (!ready()) throw new Error('the page did not finish rendering' + (failures.length ? ': ' + failures.join('; ') : ''));
   const app = els.app.innerHTML;
-  return { html: app, text: textOf(app), els };
+  return { html: app, text: textOf(app), els, title: document.title };
 }
 
 /** The rows of the Tour > Ratings table: [{id, rank, name, overall, beer, service, gl}]. */

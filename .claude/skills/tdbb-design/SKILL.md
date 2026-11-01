@@ -45,6 +45,23 @@ The Winners page has no trophy icon, to save space.
 
 Bottom menu: Winners, Breweries, Tour, People.
 
+## SEO and sharing
+
+The site is one client-rendered page, so the basics live in `<head>` and are checked by `tests/python/test_seo.py`:
+- **Title** `Tour de Berlin Breweries – Brewery Rankings & Results` (at most 65 characters) and a **description** of 70 to 160
+  characters, repeated in `og:description` and the JSON-LD `WebSite` block. The script's `BASE_TITLE` must equal `<title>`
+  (a test checks it); `render()` sets a title per view (Winners, Breweries, Tour, People) so tabs and history read well.
+- **Canonical URL** `https://berlinbreweries.github.io/` is used in the canonical link, `og:url`, the JSON-LD, `sitemap.xml`
+  and `robots.txt`. **If the address ever changes, change all five** (the test fails if they disagree).
+- **Social card** `og-image.png` (exactly 1200x630) and `apple-touch-icon.png` (180x180). Regenerate them from the logo
+  and the mug favicon if the look changes; the test checks the sizes.
+- A `<noscript>` message gives non-JavaScript crawlers the description. Hash routes are not separate pages, so the sitemap
+  lists only the root.
+- **Layout shift:** `start()` waits (at most 1 s) for the Barlow fonts before the first render; without it the centred title
+  re-laid out when the font swapped in (CLS 0.28, now 0.02). Keep it when changing start-up code.
+- Check with the Lighthouse audit (mobile): all four categories should stay at 100. Muted text on the raised card needs
+  `#b4afa5` or lighter to pass 4.5:1 contrast (plain `--muted` gives 4.34).
+
 ## Voting twins (People > Twins)
 
 `computeTwins` finds the three groups of people whose scores are closest. Nothing is stored; it is derived from the

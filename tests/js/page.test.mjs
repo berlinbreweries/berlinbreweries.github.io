@@ -333,3 +333,12 @@ test('Twins per category: says so when a category has too few shared breweries',
   assert.match(beer.text, /Not enough shared ratings yet\. Two people need 4 breweries/);
   assert.ok((await twins(b)).rows.length > 0);
 });
+
+// ---------------------------------------------------------------- browser titles
+test('the browser tab title says what page you are on', async () => {
+  const titles = {};
+  for (const hash of ['#winners', '#breweries', '#tour-agenda', '#people-twins']) titles[hash] = (await page(hash)).title;
+  assert.equal(titles['#winners'], 'Tour de Berlin Breweries – Brewery Rankings & Results');
+  assert.equal(new Set(Object.values(titles)).size, 4, 'each view has its own title: ' + JSON.stringify(titles));
+  for (const t of Object.values(titles)) assert.match(t, /Tour de Berlin Breweries/);
+});

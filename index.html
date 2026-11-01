@@ -5,7 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#353433">
-<title>TDBB results</title>
+<title>Tour de Berlin Breweries – Brewery Rankings &amp; Results</title>
+<meta name="description" content="Results and rankings from the Tour de Berlin Breweries (TDBB): we rate Berlin’s craft breweries stage by stage for beer, service and genius loci.">
+<link rel="canonical" href="https://berlinbreweries.github.io/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tour de Berlin Breweries">
+<meta property="og:title" content="Tour de Berlin Breweries – Brewery Rankings &amp; Results">
+<meta property="og:description" content="Results and rankings from the Tour de Berlin Breweries (TDBB): we rate Berlin’s craft breweries stage by stage for beer, service and genius loci.">
+<meta property="og:url" content="https://berlinbreweries.github.io/">
+<meta property="og:image" content="https://berlinbreweries.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="TDBB, the Tour de Berlin Breweries: results and rankings">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Tour de Berlin Breweries","alternateName":"TDBB","url":"https://berlinbreweries.github.io/","inLanguage":"en","description":"Results and rankings from the Tour de Berlin Breweries (TDBB): we rate Berlin’s craft breweries stage by stage for beer, service and genius loci."}</script>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%22%23353433%22/%3E%3Cpath d=%22M17 24h24v24a5 5 0 0 1-5 5H22a5 5 0 0 1-5-5z%22 fill=%22%23E7C566%22/%3E%3Cpath d=%22M41 28h4a6 6 0 0 1 6 6v3a6 6 0 0 1-6 6h-4%22 fill=%22none%22 stroke=%22%23E7C566%22 stroke-width=%225%22/%3E%3Cpath d=%22M15 25a6 6 0 0 1 5-9 7 7 0 0 1 13-2 7 7 0 0 1 10 5 5 5 0 0 1-2 6z%22 fill=%22%23FBEBD3%22/%3E%3Cpath d=%22M24 31v16M31 31v16%22 stroke=%22%23353433%22 stroke-width=%223%22 stroke-linecap=%22round%22 opacity=%22.35%22/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -183,7 +199,7 @@ td.detail{padding:4px 0 14px;background:transparent}
 .regs .rn{flex:1;min-width:0;font-weight:700;font-size:17px;line-height:1.25}
 .regs .rs{text-align:right;line-height:1.25}
 .regs .rs b{display:block;color:var(--gold);font-weight:700}
-.regs .rs small{color:var(--muted);font-size:12px}
+.regs .rs small{color:#b4afa5;font-size:12px}   /* a touch lighter than --muted so it passes 4.5:1 on the raised card */
 .trend{display:flex;align-items:center;gap:8px;margin-top:8px;color:var(--muted);font-size:12.5px}
 .trend svg{flex:none}
 .trend polyline{fill:none;stroke:var(--muted);stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round}
@@ -266,7 +282,7 @@ td.detail{padding:4px 0 14px;background:transparent}
   </div>
 </header>
 
-<main id="app" class="wrap" aria-live="polite"></main>
+<main id="app" class="wrap" aria-live="polite"><noscript><h1>Tour de Berlin Breweries</h1><p>Results and rankings from the Tour de Berlin Breweries (TDBB): we rate Berlin’s craft breweries stage by stage for beer, service and genius loci. This page needs JavaScript to show the results.</p></noscript></main>
 
 <nav class="bar" aria-label="Main">
   <div class="bar-in">
@@ -982,9 +998,12 @@ function banners(){
   if(WARN.length)s+='<div class="banner warn"><b>Some data could not be used:</b><ul>'+WARN.slice(0,6).map(w=>'<li>'+esc(w)+'</li>').join('')+'</ul></div>';
   return s;
 }
+const BASE_TITLE='Tour de Berlin Breweries – Brewery Rankings & Results';
+const VIEW_TITLES={winners:BASE_TITLE,breweries:'Berlin Breweries We Rated · Tour de Berlin Breweries',tour:'Tour Ratings & Agenda · Tour de Berlin Breweries',people:'The People of the Tour · Tour de Berlin Breweries'};
 function render(){
   if(!DB)return;
   updateProgress();
+  document.title=VIEW_TITLES[state.view]||BASE_TITLE;
   document.getElementById('app').innerHTML=banners()+({winners:renderWinners,breweries:renderProfiles,tour:renderTour,people:renderPeople})[state.view]();
   ['winners','breweries','tour','people'].forEach(v=>{const n=document.getElementById('nav-'+v);if(v===state.view)n.setAttribute('aria-current','page');else n.removeAttribute('aria-current')});
 }
@@ -1070,9 +1089,16 @@ document.addEventListener('click',e=>{
   }
 });
 
+/* Wait a moment for the web fonts before the first render, so text is not re-laid out (a layout shift) when they arrive.
+   A timeout keeps a blocked or slow font from holding the page back. */
+function fontsReady(){
+  if(!document.fonts||!document.fonts.load)return Promise.resolve();
+  const loads=Promise.all(['400','500','600','700','900'].map(w=>document.fonts.load(w+' 16px Barlow'))).catch(()=>{});
+  return Promise.race([loads,new Promise(r=>setTimeout(r,1000))]);
+}
 async function start(){
   document.getElementById('app').innerHTML='<p class="lede">Loading\u2026</p>';
-  try{DB=await loadData();prepare()}
+  try{const [data]=await Promise.all([loadData(),fontsReady()]);DB=data;prepare()}
   catch(e){showFatal(e);return}
   readHash();
   render();

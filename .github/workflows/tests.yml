@@ -6,12 +6,18 @@ on:
     branches: [master]
     paths:
       - 'index.html'
+      - 'robots.txt'
+      - 'sitemap.xml'
+      - '*.png'
       - '.claude/skills/**/scripts/**'
       - 'tests/**'
       - '.github/workflows/tests.yml'
   pull_request:
     paths:
       - 'index.html'
+      - 'robots.txt'
+      - 'sitemap.xml'
+      - '*.png'
       - '.claude/skills/**/scripts/**'
       - 'tests/**'
       - '.github/workflows/tests.yml'

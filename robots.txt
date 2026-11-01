@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://berlinbreweries.github.io/sitemap.xml
