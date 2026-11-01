@@ -587,14 +587,14 @@ function detailHtml(b){
 function renderBreweries(){
   const brews=computeBrews();
   const rated=brews.filter(b=>b.rated);
-  const lead={};
-  ['overall','beer','svc','gl'].forEach(k=>{lead[k]=rated.length?Math.max.apply(null,rated.map(b=>b[k])):null});
+  const lead={},low={};
+  ['overall','beer','svc','gl'].forEach(k=>{lead[k]=rated.length?Math.max.apply(null,rated.map(b=>b[k])):null;low[k]=rated.length?Math.min.apply(null,rated.map(b=>b[k])):null});
   const s=state.bsort;
   let rows=brews.filter(b=>state.stage==='all'||b.stage===state.stage);
   rows=sortRows(rows,s,b=>s.key==='name'?b.name:b[s.key],{pending:true});
   const body=rows.map(b=>{
     const open=state.open.has(b.id);
-    const cell=(k,extra)=>'<td class="num '+(extra||'')+(b.rated&&b[k]===lead[k]?' hi':'')+'">'+(b.rated?f2(b[k]):'\u2013')+'</td>';
+    const cell=(k,extra)=>'<td class="num '+(extra||'')+(b.rated?(b[k]===lead[k]?' hi':(b[k]===low[k]?' lo':'')):'')+'">'+(b.rated?f2(b[k]):'\u2013')+'</td>';
     return '<tr class="row'+(open?' open':'')+(b.rated?'':' pending')+'" data-brew="'+b.id+'">'+
       '<td class="txt"><span class="rk'+(b.rated?'':' none')+'">'+(b.rated?b.rank:'\u2013')+'</span></td>'+
       '<td class="txt"><button type="button" class="nmb" aria-expanded="'+open+'">'+esc(b.name)+'</button></td>'+
@@ -602,7 +602,7 @@ function renderBreweries(){
       (open?'<tr><td class="detail" colspan="6">'+detailHtml(b)+'</td></tr>':'');
   }).join('');
   const stageNote=(state.stage==='all'||SCOPE.all)
-    ?'Tap a brewery to see each person\u2019s scores. Gold marks the best in each column.'+(SCOPE.all?' Every rating from every season counts, so a brewery\u2019s score is the average of all of them.':'')
+    ?'Tap a brewery to see each person\u2019s scores. Gold marks the best in each column, lilac the lowest.'+(SCOPE.all?' Every rating from every season counts, so a brewery\u2019s score is the average of all of them.':'')
     :'Stage '+state.stage+': '+STAGES.find(x=>x.id===state.stage).label+'. Ranks are overall, across all stages.';
   return ''+
     '<p class="lede">Overall is '+wtext()+' (GL).</p>'+
