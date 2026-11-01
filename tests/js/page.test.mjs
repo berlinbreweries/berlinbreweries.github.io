@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { ratingsRows, renderPage, textOf } from './harness.mjs';
@@ -349,4 +350,11 @@ test('Biggest movers shows where a big mover stands: a big jump can still be a l
   b.seasons['2025'].stages[0].stops.find(s => s.brewery === 'delta').ratings = { ines: { beer: 0, service: 0, gl: 0 } };
   const { text } = await renderPage({ bundle: b, hash: '#winners', search: '?year=2026' });
   assert.match(section(text, 'Biggest movers', 'The regulars'), /2 Delta #5 of 5 this season \+3\.00 0\.00 → 3\.00/);
+});
+
+// ---------------------------------------------------------------- scroll hint
+test('the page has a scroll-down hint that is silent for screen readers and respects reduced motion', async () => {
+  const html = fs.readFileSync(new URL('../../index.html', import.meta.url), 'utf8');
+  assert.match(html, /<button[^>]*class="more"[^>]*tabindex="-1"/);
+  assert.match(html, /@media \(prefers-reduced-motion:no-preference\)\{\s*\.more\.on svg\{animation/);
 });
