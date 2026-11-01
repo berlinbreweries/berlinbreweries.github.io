@@ -29,7 +29,8 @@ One file, no libraries, no build step. Inside the `<script>`:
    Trends are derived too: `sparkline` (last season against the one before it) and `movers`
    (biggest improvements of the selected season, or the latest on All, against each brewery's previous rated season).
 4. **Views.** `renderWinners` (a **Next stage** banner when the latest season has a stage today or later, linking to the Agenda;
-   podium of the three best breweries, **Biggest movers**, top five regulars),
+   podium of the three best breweries, **Biggest movers** (each with its current place, e.g. "#13 of 18 this season", or
+   "all-time" on All, from the same rank as the ratings table, because a big jump can still be a low place), top five regulars),
    `renderProfiles` (Breweries: sort Top rated or A to Z; district shown before the address; a sparkline per brewery rated in
    two or more seasons, **only when Season = All**;
    badges Closed and Doesn't qualify), `renderTour` → `renderBreweries` (Ratings) and

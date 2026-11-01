@@ -58,8 +58,8 @@ test('a single season podium keeps every brewery', async () => {
 test('Biggest movers: improvements only, biggest first, from the previous visit', async () => {
   const { text } = await page('#winners', '?year=2026');
   const m = section(text, 'Biggest movers', 'The regulars');
-  assert.match(m, /1 Beta \+3\.00 2\.00 → 5\.00/);
-  assert.match(m, /2 Alpha \+1\.17 3\.00 → 4\.17/);
+  assert.match(m, /1 Beta #1 of 5 this season \+3\.00 2\.00 → 5\.00/);
+  assert.match(m, /2 Alpha #3 of 5 this season \+1\.17 3\.00 → 4\.17/);
   assert.doesNotMatch(m, /Delta/);   // got worse
   assert.doesNotMatch(m, /Gamma/);   // no change
   assert.doesNotMatch(m, /Eps/);     // no previous visit
@@ -68,7 +68,7 @@ test('Biggest movers: improvements only, biggest first, from the previous visit'
 test('Biggest movers on All skips breweries that do not qualify', async () => {
   const { text } = await page('#winners');
   const m = section(text, 'Biggest movers', 'The regulars');
-  assert.match(m, /Alpha/);
+  assert.match(m, /1 Alpha #4 of 5 all-time \+1\.17/);   // the all-time rank, from every rating
   assert.doesNotMatch(m, /Beta/);
 });
 
@@ -341,4 +341,12 @@ test('the browser tab title says what page you are on', async () => {
   assert.equal(titles['#winners'], 'Tour de Berlin Breweries – Brewery Rankings & Results');
   assert.equal(new Set(Object.values(titles)).size, 4, 'each view has its own title: ' + JSON.stringify(titles));
   for (const t of Object.values(titles)) assert.match(t, /Tour de Berlin Breweries/);
+});
+
+test('Biggest movers shows where a big mover stands: a big jump can still be a low place', async () => {
+  // Delta improves by 3.00 (tied with Beta, which comes first alphabetically) yet is still last in 2026.
+  const b = mainBundle();
+  b.seasons['2025'].stages[0].stops.find(s => s.brewery === 'delta').ratings = { ines: { beer: 0, service: 0, gl: 0 } };
+  const { text } = await renderPage({ bundle: b, hash: '#winners', search: '?year=2026' });
+  assert.match(section(text, 'Biggest movers', 'The regulars'), /2 Delta #5 of 5 this season \+3\.00 0\.00 → 3\.00/);
 });

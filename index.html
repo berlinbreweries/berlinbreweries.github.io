@@ -198,6 +198,7 @@ td.detail{padding:4px 0 14px;background:transparent}
 .regs .rk.gold{background:var(--gold);color:#2B2A29;border-color:var(--gold)}
 .regs .rn{flex:1;min-width:0;font-weight:700;font-size:17px;line-height:1.25}
 .regs .rs{text-align:right;line-height:1.25}
+.regs .rn small{display:block;margin-top:2px;color:#b4afa5;font-size:12px;font-weight:500}
 .regs .rs b{display:block;color:var(--gold);font-weight:700}
 .regs .rs small{color:#b4afa5;font-size:12px}   /* a touch lighter than --muted so it passes 4.5:1 on the raised card */
 .trend{display:flex;align-items:center;gap:8px;margin-top:8px;color:var(--muted);font-size:12.5px}
@@ -907,8 +908,12 @@ function movers(){
 function moversHtml(){
   const m=movers();
   if(!m.length)return '';
-  return '<h2 class="sec">Biggest movers</h2><p class="sec-sub">The breweries that improved most since we last visited.</p>'+
-    '<ol class="regs">'+m.map((x,i)=>'<li><span class="rk'+(i===0?' gold':'')+'">'+(i+1)+'</span><span class="rn">'+esc(x.name)+'</span>'+
+  // where each mover stands in the ratings: a big jump can still be a low place
+  const rated=computeBrews().filter(b=>b.rated),by={};
+  rated.forEach(b=>{by[b.id]=b});
+  const place=x=>by[x.id]?'<small>#'+by[x.id].rank+' of '+rated.length+(SCOPE.all?' all-time':' this season')+'</small>':'';
+  return '<h2 class="sec">Biggest movers</h2><p class="sec-sub">The breweries that improved most since we last visited, and where they stand now.</p>'+
+    '<ol class="regs">'+m.map((x,i)=>'<li><span class="rk'+(i===0?' gold':'')+'">'+(i+1)+'</span><span class="rn">'+esc(x.name)+place(x)+'</span>'+
       '<span class="rs"><b>+'+f2(x.d)+'</b><small>'+f2(x.from.overall)+' \u2192 '+f2(x.to.overall)+'</small></span></li>').join('')+'</ol>';
 }
 function nextStage(){
