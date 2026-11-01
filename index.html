@@ -85,20 +85,20 @@ thead th{
   position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--hh));z-index:5;background:var(--bg);
   border-bottom:1px solid var(--line);padding:0;font-weight:600;font-size:13px;color:var(--muted);
 }
-th.num,td.num{text-align:right}
+th.num,td.num{text-align:center}
 th.txt,td.txt{text-align:left}
 .sort{
   display:inline-flex;align-items:center;gap:4px;min-height:40px;padding:0 0 0 2px;border:0;background:none;
   cursor:pointer;font-weight:600;font-size:13px;color:var(--muted);
 }
-th.num .sort{justify-content:flex-end;width:100%}
+th.num .sort{justify-content:center;width:100%;padding:0}
 .sort.on{color:var(--gold)}
 .arr{width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;opacity:0}
 .arr.desc{border-top:5px solid currentColor;opacity:1}
 .arr.asc{border-bottom:5px solid currentColor;opacity:1}
 .plain{display:block;min-height:40px;line-height:40px;font-weight:600;font-size:13px;color:var(--muted);text-align:center}
 td{padding:0;border-bottom:1px solid var(--line);font-size:15px;font-variant-numeric:tabular-nums;vertical-align:middle}
-td.num{padding-left:4px}
+td.num{padding:0 2px}
 td.ov{font-weight:700}
 td.hi{color:var(--gold);font-weight:700}
 td.lo{color:var(--lilac)}
@@ -775,7 +775,7 @@ function renderFavourites(people){
     const then=rest.length?'<small>Then '+rest.map(x=>esc(x.b.name)+' '+f2(x.s)).join(', ')+'</small>':'';
     return '<tr class="'+(p.few?'few':'')+'"><td class="txt">'+who(p)+'</td><td class="txt"><div class="fav">'+names+then+'</div></td><td class="num ov'+(p.few?'':' hi')+'">'+f2(t[0].s)+'</td></tr>';
   }).join('');
-  const plain=(l,a)=>'<th class="'+(a==='r'?'num':'txt')+'"><span class="plain" style="text-align:'+(a==='r'?'right':'left')+'">'+l+'</span></th>';
+  const plain=(l,a)=>'<th class="'+(a==='r'?'num':'txt')+'"><span class="plain" style="text-align:'+(a==='r'?'center':'left')+'">'+l+'</span></th>';
   return line+
     '<table><colgroup><col style="width:100px"><col><col style="width:54px"></colgroup>'+
     '<thead><tr>'+plain('Person')+plain('Favourite')+plain('Score','r')+'</tr></thead><tbody>'+body+'</tbody></table>'+
