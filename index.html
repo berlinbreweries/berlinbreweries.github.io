@@ -1018,12 +1018,12 @@ function banners(){
   if(WARN.length)s+='<div class="banner warn"><b>Some data could not be used:</b><ul>'+WARN.slice(0,6).map(w=>'<li>'+esc(w)+'</li>').join('')+'</ul></div>';
   return s;
 }
-/* scroll hint: show the arrow only while the page is at the top and runs on below the fold */
+/* scroll hint: Winners page only; show the arrow only while the page is at the top and runs on below the fold */
 function updateMore(){
   const root=document.documentElement,b=document.getElementById('more');
   if(!root||!b||typeof window.innerHeight!=='number')return;
   const below=root.scrollHeight-window.innerHeight-(window.scrollY||0);
-  b.classList.toggle('on',(window.scrollY||0)<40&&below>80);
+  b.classList.toggle('on',state.view==='winners'&&(window.scrollY||0)<40&&below>80);
 }
 window.addEventListener('scroll',updateMore,{passive:true});
 window.addEventListener('resize',updateMore);
