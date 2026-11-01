@@ -85,6 +85,14 @@ class SeoTests(unittest.TestCase):
         self.assertEqual(xml.count('<loc>'), xml.count('</loc>'))
         self.assertTrue(xml.rstrip().endswith('</urlset>'))
 
+    def test_404_page_exists_is_not_indexed_and_links_home(self):
+        page = read(os.path.join(ROOT, '404.html'))
+        self.assertIn('Page not found', re.search(r'<title>(.*?)</title>', page).group(1))
+        self.assertRegex(page, r'<meta name="robots" content="noindex')
+        self.assertIn('href="/"', page)          # served at any address, so the link must not be relative
+        self.assertIsNone(re.search(r'(?:href|src)="(?!https?://|data:|/")[^"#]', page), 'a 404 page is served at any path: no relative links')
+        self.assertNotIn('http-equiv="refresh"', page, 'a missing page should stay a real 404, not a redirect')
+
 
 if __name__ == '__main__':
     unittest.main()

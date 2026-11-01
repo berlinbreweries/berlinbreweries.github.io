@@ -14,6 +14,7 @@ data/breweries.json              breweries (name, address, district, highlight, 
 data/seasons/<year>.json         one file per season, named by END year. All the ratings
 img/<breweryid>.jpg              optional own photos, about 400 px square (none yet)
 robots.txt, sitemap.xml          search engine files (canonical URL: https://berlinbreweries.github.io/)
+404.html                         shown by GitHub Pages for unknown addresses (noindex, link home, no redirect)
 og-image.png, apple-touch-icon.png   social share card (1200x630) and iPhone home-screen icon (180x180)
 .claude/skills/tdbb-ingest/      skill: add or correct ratings (data only), with validate.py and summary.py
 .claude/skills/tdbb-design/      skill: change the page (index.html only), with embed.py

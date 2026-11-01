@@ -56,6 +56,8 @@ The site is one client-rendered page, so the basics live in `<head>` and are che
   and `robots.txt`. **If the address ever changes, change all five** (the test fails if they disagree).
 - **Social card** `og-image.png` (exactly 1200x630) and `apple-touch-icon.png` (180x180). Regenerate them from the logo
   and the mug favicon if the look changes; the test checks the sizes.
+- `404.html` is shown by GitHub Pages for any unknown address. It stays a real 404 (no redirect, `noindex`) and uses only
+  absolute or root links, because it is served at any path.
 - A `<noscript>` message gives non-JavaScript crawlers the description. Hash routes are not separate pages, so the sitemap
   lists only the root.
 - **Layout shift:** `start()` waits (at most 1 s) for the Barlow fonts before the first render; without it the centred title

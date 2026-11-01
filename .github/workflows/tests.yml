@@ -7,6 +7,7 @@ on:
     paths:
       - 'index.html'
       - 'robots.txt'
+      - '404.html'
       - 'sitemap.xml'
       - '*.png'
       - '.claude/skills/**/scripts/**'
